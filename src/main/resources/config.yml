@@ -1,0 +1,11 @@
+# Szanse i mnożniki ceny pełnej (100%)
+chances:
+  25:
+    price-multiplier: 0.25
+  50:
+    price-multiplier: 0.50
+  100:
+    price-multiplier: 1.00
+starter:
+  give-on-first-join: true
+  auto-respawn-set: true

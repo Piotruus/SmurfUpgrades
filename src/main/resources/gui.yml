@@ -1,0 +1,19 @@
+# Sloty liczone od 0, zakres 0-53. Unikaj nakładania się slotów.
+background: GRAY_STAINED_GLASS_PANE
+slots:
+  category:
+    helmet: 10
+    chestplate: 11
+    leggings: 12
+    boots: 13
+    sword: 14
+    axe: 15
+    shears: 16
+    elytra: 22
+  chance:
+    25: 11
+    50: 13
+    100: 15
+  current: 21
+  next: 23
+  back: 49

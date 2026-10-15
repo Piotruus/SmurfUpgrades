@@ -1,0 +1,20 @@
+name: SmurfUpgrades
+version: 1.0.0
+main: pl.smurfpvp.SmurfUpgrades
+api-version: '1.21'
+author: SmurfPvP
+softdepend: [Vault, HeadDatabase]
+commands:
+  ulepsz:
+    description: Menu ulepszeń
+    aliases: [ulepszenie]
+  sety:
+    description: Podgląd wszystkich setów
+  cenyulepszen:
+    description: Cennik setów
+  smurfadmin:
+    description: Administracja pluginem
+    permission: smurf.admin
+permissions:
+  smurf.admin:
+    default: op
