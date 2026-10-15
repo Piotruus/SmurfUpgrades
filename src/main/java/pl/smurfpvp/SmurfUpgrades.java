@@ -36,15 +36,16 @@ public final class SmurfUpgrades extends JavaPlugin implements Listener, Command
   private File playersFile; private final Map<UUID,Menu> open=new HashMap<>(); private final Map<UUID,Inventory> menuInventories=new HashMap<>();
   private record Menu(String kind,int type,int level) {}
   private NamespacedKey ownedKey;
+  private final Set<String> warnedHeads=new HashSet<>();
 
   @Override public void onEnable(){saveDefaultConfig(); ensure("upgrades.yml");ensure("gui.yml");playersFile=new File(getDataFolder(),"players.yml");players=YamlConfiguration.loadConfiguration(playersFile);loadOther();ownedKey=new NamespacedKey(this,"avengers_item");
     if(getServer().getPluginManager().getPlugin("Vault")!=null){RegisteredServiceProvider<Economy> p=getServer().getServicesManager().getRegistration(Economy.class);if(p!=null)economy=p.getProvider();}
-    for(String c:new String[]{"ulepsz","sety","cenyulepszen","smurfadmin","topulepszen"}) Objects.requireNonNull(getCommand(c)).setExecutor(this);
+    for(String c:new String[]{"ulepsz","sety","cenyulepszen","smurfadmin","avengersadmin","topulepszen"}) Objects.requireNonNull(getCommand(c)).setExecutor(this);
     getServer().getPluginManager().registerEvents(this,this);
     getLogger().info("AvengersUpgrades enabled; Vault economy: "+(economy!=null));
   }
   private void ensure(String name){File f=new File(getDataFolder(),name);if(!f.exists())saveResource(name,false);}
-  private void loadOther(){reloadConfig();upgrades=YamlConfiguration.loadConfiguration(new File(getDataFolder(),"upgrades.yml"));gui=YamlConfiguration.loadConfiguration(new File(getDataFolder(),"gui.yml"));}
+  private void loadOther(){warnedHeads.clear();reloadConfig();upgrades=YamlConfiguration.loadConfiguration(new File(getDataFolder(),"upgrades.yml"));gui=YamlConfiguration.loadConfiguration(new File(getDataFolder(),"gui.yml"));}
   private void savePlayers(){try{players.save(playersFile);}catch(Exception e){getLogger().severe("Cannot save players.yml: "+e.getMessage());}}
   private String path(Player p,int type){return "players."+p.getUniqueId()+"."+types[type];}
   private int level(Player p,int type){return Math.max(0,Math.min(12,players.getInt(path(p,type),0)));}
@@ -131,10 +132,11 @@ public final class SmurfUpgrades extends JavaPlugin implements Listener, Command
   private double cumulative(int l){double sum=0;for(int j=2;j<=l;j++)sum+=total(j);return sum;}
   private void costs(Player p){Inventory inv=inventory("CENNIK SETÓW");for(int l=1;l<=12;l++)put(inv,10+l-1,simple(Material.GOLD_INGOT,"&e"+l+". "+character(l),"&7Cena przejścia wszystkich części: &6"+money(total(l))+" $","&7Łącznie od poziomu 1: &6"+money(cumulative(l))+" $"));put(inv,guiSlot("back",49),simple(Material.BARRIER,"&cZamknij"));display(p,inv,"costs",-1,0);}
   private ItemStack head(int l,String name,String... lore){String id=upgrades.getString("levels."+l+".head-id","");ItemStack item=null;
-    if(!id.isBlank()&&Bukkit.getPluginManager().isPluginEnabled("HeadDatabase")){try{Class<?> c=Class.forName("me.arcaniax.hdb.api.HeadDatabaseAPI");Object api=c.getDeclaredConstructor().newInstance();Method m=c.getMethod("getItemHead",String.class);Object got=m.invoke(api,id);if(got instanceof ItemStack stack&&stack.getType()==Material.PLAYER_HEAD)item=stack.clone();}catch(Exception e){getLogger().warning("HeadDatabase ID "+id+" unavailable: "+e.getMessage());}}
+    if(!id.isBlank()&&Bukkit.getPluginManager().isPluginEnabled("HeadDatabase")){try{Class<?> c=Class.forName("me.arcaniax.hdb.api.HeadDatabaseAPI");Object api=c.getDeclaredConstructor().newInstance();Method m=c.getMethod("getItemHead",String.class);Object got=m.invoke(api,id);if(got instanceof ItemStack stack&&stack.getType()==Material.PLAYER_HEAD)item=stack.clone();}catch(Exception e){if(warnedHeads.add(id))getLogger().warning("HeadDatabase ID "+id+" unavailable: "+e.getMessage());}}
     if(item==null){
       item=new ItemStack(Material.PLAYER_HEAD);
       String texture=upgrades.getString("levels."+l+".texture-base64", "");
+      if(texture.isBlank() && id.isBlank() && warnedHeads.add("missing-"+l))getLogger().warning("Brak tekstury glowy Avengers poziom "+l+" ("+character(l)+"). Ustaw levels."+l+".head-id w upgrades.yml po /hdb search.");
       if(!texture.isBlank() && item.getItemMeta() instanceof SkullMeta skull){
         try{
           PlayerProfile profile=Bukkit.createProfile(UUID.nameUUIDFromBytes(("avengers-head-"+l).getBytes(StandardCharsets.UTF_8)));
@@ -311,9 +313,26 @@ public final class SmurfUpgrades extends JavaPlugin implements Listener, Command
     for(ItemStack stack:rest.values())p.getWorld().dropItemNaturally(p.getLocation(),stack);
     p.updateInventory();
   }
-  private void replaceManaged(Player p,int type,int l){ItemStack updated=equipment(type,l,true);if(!hasManaged(p,type)){giveSingle(p,type,updated);return;} if(isManaged(p.getInventory().getItemInOffHand(),type)){p.getInventory().setItemInOffHand(updated);return;}if(type==0){if(isManaged(p.getInventory().getHelmet(),type))p.getInventory().setHelmet(updated);}else if(type==1){if(isManaged(p.getInventory().getChestplate(),type))p.getInventory().setChestplate(updated);}else if(type==2){if(isManaged(p.getInventory().getLeggings(),type))p.getInventory().setLeggings(updated);}else if(type==3){if(isManaged(p.getInventory().getBoots(),type))p.getInventory().setBoots(updated);}else{for(int slot=0;slot<p.getInventory().getStorageContents().length;slot++){if(isManaged(p.getInventory().getItem(slot),type)){p.getInventory().setItem(slot,updated);break;}}}}
+  // Replace all owned copies, including armor, hotbar and offhand. This also fixes stale ⭐1 items.
+  private void replaceManaged(Player p,int type,int l){
+    ItemStack updated=equipment(type,l,true);
+    boolean found=false;
+    PlayerInventory inv=p.getInventory();
+    for(int slot=0;slot<inv.getSize();slot++){
+      ItemStack old=inv.getItem(slot);
+      if(isManaged(old,type)){
+        inv.setItem(slot,updated.clone());
+        found=true;
+      }
+    }
+    if(isManaged(inv.getItemInOffHand(),type)){
+      inv.setItemInOffHand(updated.clone());found=true;
+    }
+    if(!found)giveSingle(p,type,updated);
+    p.updateInventory();
+  }
   private boolean isAnyManaged(ItemStack i){return i!=null&&i.hasItemMeta()&&i.getItemMeta().getPersistentDataContainer().has(ownedKey,PersistentDataType.STRING);}
   private boolean isManaged(ItemStack i,int type){return i!=null&&i.hasItemMeta()&&types[type].equals(i.getItemMeta().getPersistentDataContainer().get(ownedKey,PersistentDataType.STRING));}
-  @Override public boolean onCommand(CommandSender sender,Command cmd,String alias,String[] args){String name=cmd.getName();if(name.equals("smurfadmin")){if(!sender.hasPermission("smurf.admin")){sender.sendMessage(tr("&cBrak uprawnień."));return true;}if(args.length==1&&args[0].equalsIgnoreCase("reload")){loadOther();sender.sendMessage(tr("&aKonfiguracja przeładowana."));}else sender.sendMessage("/smurfadmin reload");return true;}
+  @Override public boolean onCommand(CommandSender sender,Command cmd,String alias,String[] args){String name=cmd.getName();if(name.equals("smurfadmin")||name.equals("avengersadmin")){if(!sender.hasPermission("avengers.admin")&&!sender.hasPermission("smurf.admin")){sender.sendMessage(tr("&cBrak uprawnień."));return true;}if(args.length==1&&args[0].equalsIgnoreCase("reload")){loadOther();sender.sendMessage(tr("&aKonfiguracja przeładowana."));}else sender.sendMessage("/avengersadmin reload");return true;}
     if(!(sender instanceof Player p)){sender.sendMessage("Komenda tylko dla graczy.");return true;}init(p);switch(name){case "ulepsz"->main(p);case "cenyulepszen"->costs(p);case "topulepszen"->ranking(p);case "sety"->{if(args.length>0){try{int l=Integer.parseInt(args[0]);if(l>=1&&l<=12)setPreview(p,l);else p.sendMessage(tr("&cPoziom 1–12."));}catch(NumberFormatException ex){p.sendMessage(tr("&cPodaj poziom 1–12."));}}else sets(p);}}return true;}
 }

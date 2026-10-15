@@ -1,8 +1,8 @@
 name: AvengersUpgrades
-version: 3.1.0
+version: 3.2.0
 main: pl.smurfpvp.SmurfUpgrades
 api-version: '1.21'
-author: SmurfPvP
+author: AvengersUpgrades
 softdepend: [Vault, HeadDatabase]
 commands:
   ulepsz:
@@ -14,9 +14,14 @@ commands:
     description: Cennik setów
   topulepszen:
     description: Ranking sumy poziomów ulepszeń
+  avengersadmin:
+    description: Administracja AvengersUpgrades
+    permission: avengers.admin
   smurfadmin:
     description: Administracja pluginem
     permission: smurf.admin
 permissions:
+  avengers.admin:
+    default: op
   smurf.admin:
     default: op
