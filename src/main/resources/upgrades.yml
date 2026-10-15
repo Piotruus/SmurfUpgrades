@@ -1,66 +1,89 @@
-# Automatyczne przypisanie: poziomy 1-10 używają TYMCZASOWO tekstury Papy Smerfa.
-# Poziom 11: Papa Smerf, poziom 12: Gargamel. Możesz zmienić head-id na własny.
-# Gdy HeadDatabase nie jest zainstalowany, plugin używa wbudowanych tekstur tych dwóch postaci.
+# AvengersUpgrades — ustaw ID HeadDatabase lub texture-base64 dla każdej postaci.
+# Nie wpisano niezweryfikowanych ID; bez nich widoczna będzie zwykła główka gracza.
 levels:
   1:
-    name: "Smerfetka"
-    color: "#F4D54E"
-    head-id: "11820" # TYMCZASOWA główka Papa Smerfa; zastąp po znalezieniu tekstury
+    name: "Hawkeye"
+    color: "#A478D6"
+    title-color: "&#A478D6"
+    head-id: ""
+    texture-base64: ""
     price: 0
   2:
-    name: "Ciamajda"
-    color: "#8DDCF4"
-    head-id: "11820" # TYMCZASOWA główka Papa Smerfa; zastąp po znalezieniu tekstury
+    name: "Black Widow"
+    color: "#EF5555"
+    title-color: "&#EF5555"
+    head-id: ""
+    texture-base64: ""
     price: 2500
   3:
-    name: "Łasuch"
-    color: "#F5A3C8"
-    head-id: "11820" # TYMCZASOWA główka Papa Smerfa; zastąp po znalezieniu tekstury
+    name: "Falcon"
+    color: "#55B6F7"
+    title-color: "&#55B6F7"
+    head-id: ""
+    texture-base64: ""
     price: 5000
   4:
-    name: "Maruda"
-    color: "#3E6E9B"
-    head-id: "11820" # TYMCZASOWA główka Papa Smerfa; zastąp po znalezieniu tekstury
+    name: "Winter Soldier"
+    color: "#C2C6D1"
+    title-color: "&#C2C6D1"
+    head-id: ""
+    texture-base64: ""
     price: 10000
   5:
-    name: "Osiłek"
-    color: "#E85B45"
-    head-id: "11820" # TYMCZASOWA główka Papa Smerfa; zastąp po znalezieniu tekstury
+    name: "Captain America"
+    color: "#3286F7"
+    title-color: "&#3286F7"
+    head-id: ""
+    texture-base64: ""
     price: 20000
   6:
-    name: "Ważniak"
-    color: "#E6E6E6"
-    head-id: "11820" # TYMCZASOWA główka Papa Smerfa; zastąp po znalezieniu tekstury
+    name: "Black Panther"
+    color: "#A56BEE"
+    title-color: "&#A56BEE"
+    head-id: ""
+    texture-base64: ""
     price: 35000
   7:
-    name: "Pracuś"
-    color: "#F39C41"
-    head-id: "11820" # TYMCZASOWA główka Papa Smerfa; zastąp po znalezieniu tekstury
+    name: "Spider-Man"
+    color: "#F04444"
+    title-color: "&#F04444"
+    head-id: ""
+    texture-base64: ""
     price: 55000
   8:
-    name: "Zgrywus"
-    color: "#A86CE3"
-    head-id: "11820" # TYMCZASOWA główka Papa Smerfa; zastąp po znalezieniu tekstury
+    name: "Hulk"
+    color: "#55DB5D"
+    title-color: "&#55DB5D"
+    head-id: ""
+    texture-base64: ""
     price: 80000
   9:
-    name: "Laluś"
-    color: "#66D6BF"
-    head-id: "11820" # TYMCZASOWA główka Papa Smerfa; zastąp po znalezieniu tekstury
+    name: "Thor"
+    color: "#65D7FF"
+    title-color: "&#65D7FF"
+    head-id: ""
+    texture-base64: ""
     price: 120000
   10:
-    name: "Dziadek Smerf"
-    color: "#8796AA"
-    head-id: "11820" # TYMCZASOWA główka Papa Smerfa; zastąp po znalezieniu tekstury
+    name: "Doctor Strange"
+    color: "#F5A544"
+    title-color: "&#F5A544"
+    head-id: ""
+    texture-base64: ""
     price: 175000
   11:
-    name: "Papa Smerf"
-    color: "#DC404B"
-    head-id: "11820" # Papa Smerf
+    name: "Scarlet Witch"
+    color: "#FF4A99"
+    title-color: "&#FF4A99"
+    head-id: ""
+    texture-base64: ""
     price: 250000
   12:
-    name: "Gargamel"
-    color: "#37204F"
-    head-id: "86177" # Gargamel
+    name: "Iron Man"
+    color: "#E53935"
+    title-color: "&#E53935"
+    head-id: ""
+    texture-base64: ""
     price: 500000
 items:
   helmet:

@@ -37,20 +37,27 @@ public final class SmurfUpgrades extends JavaPlugin implements Listener, Command
   private record Menu(String kind,int type,int level) {}
   private NamespacedKey ownedKey;
 
-  @Override public void onEnable(){saveDefaultConfig(); ensure("upgrades.yml");ensure("gui.yml");playersFile=new File(getDataFolder(),"players.yml");players=YamlConfiguration.loadConfiguration(playersFile);loadOther();ownedKey=new NamespacedKey(this,"smurf_item");
+  @Override public void onEnable(){saveDefaultConfig(); ensure("upgrades.yml");ensure("gui.yml");playersFile=new File(getDataFolder(),"players.yml");players=YamlConfiguration.loadConfiguration(playersFile);loadOther();ownedKey=new NamespacedKey(this,"avengers_item");
     if(getServer().getPluginManager().getPlugin("Vault")!=null){RegisteredServiceProvider<Economy> p=getServer().getServicesManager().getRegistration(Economy.class);if(p!=null)economy=p.getProvider();}
     for(String c:new String[]{"ulepsz","sety","cenyulepszen","smurfadmin","topulepszen"}) Objects.requireNonNull(getCommand(c)).setExecutor(this);
     getServer().getPluginManager().registerEvents(this,this);
-    getLogger().info("SmurfUpgrades enabled; Vault economy: "+(economy!=null));
+    getLogger().info("AvengersUpgrades enabled; Vault economy: "+(economy!=null));
   }
   private void ensure(String name){File f=new File(getDataFolder(),name);if(!f.exists())saveResource(name,false);}
   private void loadOther(){reloadConfig();upgrades=YamlConfiguration.loadConfiguration(new File(getDataFolder(),"upgrades.yml"));gui=YamlConfiguration.loadConfiguration(new File(getDataFolder(),"gui.yml"));}
   private void savePlayers(){try{players.save(playersFile);}catch(Exception e){getLogger().severe("Cannot save players.yml: "+e.getMessage());}}
   private String path(Player p,int type){return "players."+p.getUniqueId()+"."+types[type];}
-  private int level(Player p,int type){return Math.max(1,Math.min(12,players.getInt(path(p,type),1)));}
-  private void init(Player p){boolean changed=false;for(int i=0;i<types.length;i++){if(!players.contains(path(p,i))){players.set(path(p,i),1);changed=true;}}if(changed)savePlayers();}
-  private String tr(String s){return ChatColor.translateAlternateColorCodes('&',s==null?"":s);}
-  private String title(String name){return tr("&8🍄 "+name);}
+  private int level(Player p,int type){return Math.max(0,Math.min(12,players.getInt(path(p,type),0)));}
+  private void init(Player p){boolean changed=false;for(int i=0;i<types.length;i++){if(!players.contains(path(p,i))){players.set(path(p,i),0);changed=true;}}if(changed)savePlayers();}
+  private String tr(String s){
+    if(s==null)return "";
+    java.util.regex.Matcher m=java.util.regex.Pattern.compile("&#([0-9a-fA-F]{6})").matcher(s);
+    StringBuffer out=new StringBuffer();
+    while(m.find())m.appendReplacement(out,java.util.regex.Matcher.quoteReplacement(net.md_5.bungee.api.ChatColor.of("#"+m.group(1)).toString()));
+    m.appendTail(out);
+    return ChatColor.translateAlternateColorCodes('&',out.toString());
+  }
+  private String title(String name){return tr("&8⚡ "+name);}
   private String character(int l){return upgrades.getString("levels."+l+".name","Poziom "+l);}
   private double price(int type,int l){return Math.max(0,upgrades.getDouble("items."+types[type]+".levels."+l+".price",upgrades.getDouble("levels."+l+".price",0)));}
   private double multiplier(int chance){return getConfig().getDouble("chances."+chance+".price-multiplier",chance/100.0);}
@@ -80,7 +87,7 @@ public final class SmurfUpgrades extends JavaPlugin implements Listener, Command
     record Entry(String name,int total){}
     List<Entry> entries=new ArrayList<>();
     for(String key:section.getKeys(false)){
-      try{UUID uuid=UUID.fromString(key);int total=0;for(String type:types)total+=Math.max(1,Math.min(12,players.getInt(prefix+key+"."+type,1)));
+      try{UUID uuid=UUID.fromString(key);int total=0;for(String type:types)total+=Math.max(0,Math.min(12,players.getInt(prefix+key+"."+type,0)));
         String name=Optional.ofNullable(Bukkit.getOfflinePlayer(uuid).getName()).orElse(key.substring(0,8));entries.add(new Entry(name,total));
       }catch(IllegalArgumentException ignored){}
     }
@@ -89,7 +96,7 @@ public final class SmurfUpgrades extends JavaPlugin implements Listener, Command
     for(int i=0;i<Math.min(limit,entries.size());i++){Entry entry=entries.get(i);p.sendMessage(tr("&e"+(i+1)+". &f"+entry.name()+" &8» &b"+entry.total()+" &7/ "+(types.length*12)+" ⭐"));}
   }
   private void main(Player p){
-    Inventory inv=inventory("&b&lSMERFOWE ULEPSZENIA");
+    Inventory inv=inventory("&b&lULEPSZENIA PRZEDMIOTÓW");
     // Symetryczna ramka i dyskretne dekoracje. Sloty kategorii są konfigurowalne.
     ItemStack edge=simple(Material.BLUE_STAINED_GLASS_PANE," ");
     ItemStack accent=simple(Material.LIGHT_BLUE_STAINED_GLASS_PANE," ");
@@ -98,27 +105,27 @@ public final class SmurfUpgrades extends JavaPlugin implements Listener, Command
     for(int i=0;i<9;i++){put(inv,i,edge);put(inv,45+i,edge);}
     for(int row=1;row<5;row++){put(inv,row*9,edge);put(inv,row*9+8,edge);}
     for(int i:new int[]{2,3,5,6,10,16,28,34,38,42,47,51})put(inv,i,accent);
-    put(inv,4,simple(Material.NETHER_STAR,"&b&l✦ SMURF UPGRADES ✦","&7Wybierz przedmiot do ulepszenia","&7Każda kategoria ma osobny poziom","&eLPM &8» &fUlepszanie","&bPPM &8» &fPodgląd poziomów"));
+    
     for(int t=0;t<types.length;t++){
       int l=level(p,t);
       String color=rankColor(l);
-      ItemStack item=equipment(t,l,false);
+      ItemStack item=l==0?new ItemStack(materials[t]):equipment(t,l,false);
       ItemMeta meta=item.getItemMeta();
-      meta.setDisplayName(tr(color+"&l✦ "+labels[t]+" &8• ")+levelTag(l));
-      meta.setLore(Arrays.asList(tr("&8━━━━━━━━━━━━━━━━━━━━"),tr("&7Postać: "+color+character(l)),tr("&7Twój poziom: ")+levelTag(l)+tr(" &8/ &f12"),tr("&7Następny: ")+(l==12?tr("&dMAX"):levelTag(l+1)),tr(" "),tr("&e▸ LPM &7— ulepsz przedmiot"),tr("&b▸ PPM &7— wszystkie poziomy"),tr("&8━━━━━━━━━━━━━━━━━━━━")));
+      meta.setDisplayName(tr(color+"&l✦ "+labels[t]+" &8• ")+(l==0?tr("&70 ⭐"):levelTag(l)));
+      meta.setLore(Arrays.asList(tr("&8━━━━━━━━━━━━━━━━━━━━"),tr("&7Postać: "+(l==0?"&8Nieodblokowana":color+character(l))),tr("&7Twój poziom: ")+(l==0?tr("&70 ⭐"):levelTag(l))+tr(" &8/ &f12"),tr("&7Następny: ")+(l==12?tr("&dMAX"):levelTag(l+1)),tr(" "),tr("&e▸ LPM &7— ulepsz przedmiot"),tr("&b▸ PPM &7— wszystkie poziomy"),tr("&8━━━━━━━━━━━━━━━━━━━━")));
       item.setItemMeta(meta);
       put(inv,guiSlot("category."+types[t],categorySlots[t]),item);
     }
-    put(inv,guiSlot("main.info",40),simple(Material.BOOK,"&b&lINFORMACJE","&7Poziom startowy: &a⭐1 &7(darmowy)","&7Poziom maksymalny: &d⭐12","&7Szanse: &625% &8/ &e50% &8/ &a100%"));
+    // Usunięto książkę informacyjną z GUI /ulepsz.
     put(inv,guiSlot("back",49),simple(Material.BARRIER,"&c&l✖ ZAMKNIJ","&7Kliknij, aby wyjść"));
     display(p,inv,"main",-1,0);
   }
   private void upgrade(Player p,int type){int current=level(p,type);Inventory inv=inventory("ULEPSZ: "+labels[type]);
-    for(int chance:new int[]{25,50,100}){int slot=guiSlot("chance."+chance,chance==25?11:chance==50?13:15);int next=Math.min(12,current+1);double cost=price(type,next)*multiplier(chance);put(inv,slot,simple(chance==25?Material.ORANGE_CONCRETE:chance==50?Material.YELLOW_CONCRETE:Material.LIME_CONCRETE,"&e"+chance+"% szansy","&7Cena próby: &6"+money(cost)+" $","&7Kliknij, aby spróbować"));}
-    put(inv,guiSlot("current",21),equipment(type,current,false));put(inv,guiSlot("next",23),current==12?simple(Material.NETHER_STAR,"&dMAX POZIOM"):equipment(type,current+1,false));put(inv,guiSlot("back",49),simple(Material.ARROW,"&cWróć"));display(p,inv,"upgrade",type,current);}
+    for(int chance:new int[]{25,50,100}){int slot=guiSlot("chance."+chance,chance==25?11:chance==50?13:15);int next=Math.min(12,current+1);double cost=current==0?0:price(type,next)*multiplier(chance);put(inv,slot,simple(chance==25?Material.ORANGE_CONCRETE:chance==50?Material.YELLOW_CONCRETE:Material.LIME_CONCRETE,"&e"+(current==0?"100":chance)+"% szansy","&7Cena próby: &6"+money(cost)+" $","&7Kliknij, aby spróbować"));}
+    put(inv,guiSlot("current",21),current==0?simple(Material.BARRIER,"&7Brak przedmiotu","&aKup ⭐1 za 0 $"):equipment(type,current,false));put(inv,guiSlot("next",23),current==12?simple(Material.NETHER_STAR,"&dMAX POZIOM"):equipment(type,current+1,false));put(inv,guiSlot("back",49),simple(Material.ARROW,"&cWróć"));display(p,inv,"upgrade",type,current);}
   private String money(double d){return String.format(Locale.US,"%,.0f",d);}
   private void preview(Player p,int type){Inventory inv=inventory("POZIOMY: "+labels[type]);for(int l=1;l<=12;l++)put(inv,10+l-1,equipment(type,l,false));put(inv,guiSlot("back",49),simple(Material.ARROW,"&cWróć"));display(p,inv,"preview",type,0);}
-  private void sets(Player p){Inventory inv=inventory("WSZYSTKIE SETY");for(int l=1;l<=12;l++)put(inv,10+l-1,head(l,"&b"+l+". "+character(l),"&7Kliknij: pełny podgląd","&7Koszt tego poziomu: &6"+money(total(l))+" $"));put(inv,guiSlot("back",49),simple(Material.BARRIER,"&cZamknij"));display(p,inv,"sets",-1,0);}
+  private void sets(Player p){Inventory inv=inventory("WSZYSTKIE SETY");for(int l=1;l<=12;l++)put(inv,10+l-1,head(l,"&f"+l+". "+character(l),"&7Kliknij: pełny podgląd","&7Koszt tego poziomu: &6"+money(total(l))+" $"));put(inv,guiSlot("back",49),simple(Material.BARRIER,"&cZamknij"));display(p,inv,"sets",-1,0);}
   private double total(int l){double sum=0;for(int t=0;t<types.length;t++)sum+=price(t,l);return sum;}
   private void setPreview(Player p,int l){Inventory inv=inventory("SET "+l+": "+character(l));for(int t=0;t<types.length;t++)put(inv,categorySlots[t],equipment(t,l,false));put(inv,31,simple(Material.GOLD_INGOT,"&6Cena pełnego poziomu: "+money(total(l))+" $","&7Łączny koszt od I do "+l+": &e"+money(cumulative(l))+" $"));put(inv,guiSlot("back",49),simple(Material.ARROW,"&cWróć"));display(p,inv,"setpreview",-1,l);}
   private double cumulative(int l){double sum=0;for(int j=2;j<=l;j++)sum+=total(j);return sum;}
@@ -127,26 +134,59 @@ public final class SmurfUpgrades extends JavaPlugin implements Listener, Command
     if(!id.isBlank()&&Bukkit.getPluginManager().isPluginEnabled("HeadDatabase")){try{Class<?> c=Class.forName("me.arcaniax.hdb.api.HeadDatabaseAPI");Object api=c.getDeclaredConstructor().newInstance();Method m=c.getMethod("getItemHead",String.class);Object got=m.invoke(api,id);if(got instanceof ItemStack stack&&stack.getType()==Material.PLAYER_HEAD)item=stack.clone();}catch(Exception e){getLogger().warning("HeadDatabase ID "+id+" unavailable: "+e.getMessage());}}
     if(item==null){
       item=new ItemStack(Material.PLAYER_HEAD);
-      if(item.getItemMeta() instanceof SkullMeta skull){
+      String texture=upgrades.getString("levels."+l+".texture-base64", "");
+      if(!texture.isBlank() && item.getItemMeta() instanceof SkullMeta skull){
         try{
-          String hash=l==12?"4a47eb0efbcd6f355195eb2dd4b9f11994b194c3b0e6eca230f3db6973c597d81":"3a8a93a8e6b4262ca44f8b1b7eb3457c2704e3912bc314aa9347f4cddb3885f";
-          String texture=Base64.getEncoder().encodeToString(("{\"textures\":{\"SKIN\":{\"url\":\"http://textures.minecraft.net/texture/"+hash+"\"}}}").getBytes(StandardCharsets.UTF_8));
-          PlayerProfile profile=Bukkit.createProfile(UUID.nameUUIDFromBytes(("smurf-head-"+l).getBytes(StandardCharsets.UTF_8)));
+          PlayerProfile profile=Bukkit.createProfile(UUID.nameUUIDFromBytes(("avengers-head-"+l).getBytes(StandardCharsets.UTF_8)));
           profile.setProperty(new ProfileProperty("textures",texture));
-          skull.setPlayerProfile(profile);
-          item.setItemMeta(skull);
-        }catch(Exception e){getLogger().warning("Could not apply embedded Smurf head texture: "+e.getMessage());}
+          skull.setPlayerProfile(profile);item.setItemMeta(skull);
+        }catch(Exception e){getLogger().warning("Nieprawidłowa tekstura poziomu "+l+": "+e.getMessage());}
       }
     }ItemMeta meta=item.getItemMeta();meta.setDisplayName(tr(name));meta.setLore(Arrays.stream(lore).map(this::tr).toList());item.setItemMeta(meta);return item;}
-  private ItemStack equipment(int type,int l,boolean tagged){ItemStack item=type==0?head(l,"&b"+character(l)+" &7- Główka"):new ItemStack(materials[type]);ItemMeta meta=item.getItemMeta();meta.setDisplayName(l==12?format(getConfig().getString("legendary.item-name","&5&l✦ {character} &d{stars} &5&l✦"),l):tr("&b"+labels[type]+" &8» &e"+character(l)+" &7[")+levelTag(l)+tr("]"));
-    if(meta instanceof LeatherArmorMeta leather){try{leather.setColor(Color.fromRGB(Integer.parseInt(upgrades.getString("levels."+l+".color","#FFFFFF").replace("#",""),16)));}catch(Exception ignored){}}
-    String enchPath="items."+types[type]+".levels."+l+".enchants";var section=upgrades.getConfigurationSection(enchPath);if(section!=null)for(String key:section.getKeys(false)){Enchantment ench=Registry.ENCHANTMENT.get(NamespacedKey.minecraft(key.toLowerCase(Locale.ROOT)));if(ench!=null){int value=Math.max(1,Math.min(32767,section.getInt(key)));meta.addEnchant(ench,value,true);}}
-    List<String> lore=new ArrayList<>(List.of(tr("&7Poziom: ")+levelTag(l)+tr(" &8/ &e12"),tr("&7Postać: &b"+character(l)),tr("&7Cena przejścia: &6"+money(price(type,l))+" $")));
-    if(l==12)for(String line:getConfig().getStringList("legendary.lore"))lore.add(format(line,l));
+  private String small(String value){
+    String from="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    String to="ᴀʙᴄᴅᴇꜰɢʜɪᴊᴋʟᴍɴᴏᴘǫʀꜱᴛᴜᴠᴡxʏᴢ";
+    StringBuilder out=new StringBuilder();
+    for(char c:value.toLowerCase(Locale.ROOT).toCharArray()){
+      int i="abcdefghijklmnopqrstuvwxyz".indexOf(c);
+      out.append(i>=0?new String[]{"ᴀ","ʙ","ᴄ","ᴅ","ᴇ","ꜰ","ɢ","ʜ","ɪ","ᴊ","ᴋ","ʟ","ᴍ","ɴ","ᴏ","ᴘ","ǫ","ʀ","ꜱ","ᴛ","ᴜ","ᴠ","ᴡ","x","ʏ","ᴢ"}[i]:c);
+    }
+    return out.toString();
+  }
+  private String enchantLabel(String key){return switch(key.toLowerCase(Locale.ROOT)){
+    case "sharpness"->"Ostrość";case "protection"->"Ochrona";case "unbreaking"->"Niezniszczalność";
+    case "efficiency"->"Wydajność";case "fortune"->"Szczęście";case "mending"->"Naprawa";
+    case "fire_aspect"->"Zaklęty ogień";case "looting"->"Grabież";case "feather_falling"->"Łagodny upadek";
+    case "silk_touch"->"Jedwabny dotyk";case "sweeping_edge"->"Szerokie ostrze";
+    default->key.replace('_',' ');
+  };}
+  private ItemStack equipment(int type,int l,boolean tagged){
+    ItemStack item=type==0?head(l," "):new ItemStack(materials[type]);
+    ItemMeta meta=item.getItemMeta();
+    String color=upgrades.getString("levels."+l+".color","#FFFFFF");
+    String prefix=upgrades.getString("levels."+l+".title-color","&f");
+    String display=small(labels[type])+" "+small(character(l))+" ⭐"+l;
+    meta.setDisplayName(tr(prefix+display));
+    if(meta instanceof LeatherArmorMeta leather){try{leather.setColor(Color.fromRGB(Integer.parseInt(color.replace("#",""),16)));}catch(Exception ignored){}}
+    String enchPath="items."+types[type]+".levels."+l+".enchants";
+    var section=upgrades.getConfigurationSection(enchPath);
+    List<String> lore=new ArrayList<>();
+    if(section!=null){
+      for(String key:section.getKeys(false)){
+        Enchantment ench=Registry.ENCHANTMENT.get(NamespacedKey.minecraft(key.toLowerCase(Locale.ROOT)));
+        if(ench!=null){
+          int value=Math.max(1,Math.min(32767,section.getInt(key)));
+          meta.addEnchant(ench,value,true);
+          String tint=key.equalsIgnoreCase("unbreaking")?"&a":"&b";
+          lore.add(tr(tint+"[✦] "+enchantLabel(key)+" "+value));
+        }
+      }
+    }
+    meta.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_ENCHANTS,org.bukkit.inventory.ItemFlag.HIDE_ATTRIBUTES);
     meta.setLore(lore);
     // CustomModelData is applied only to the plugin's sword, including GUI previews.
     if(type==4 && getConfig().getBoolean("sword-texture.enabled",true)){
-      int modelData=getConfig().getInt("sword-texture.custom-model-data",240001);
+      int modelData=getConfig().getInt("sword-texture.custom-model-data",240000)+l;
       if(modelData>0)meta.setCustomModelData(modelData);
     }
     if(tagged)meta.getPersistentDataContainer().set(ownedKey,PersistentDataType.STRING,types[type]);item.setItemMeta(meta);return item;}
@@ -245,9 +285,9 @@ public final class SmurfUpgrades extends JavaPlugin implements Listener, Command
       }
     }
   }
-  @EventHandler public void join(PlayerJoinEvent e){Player p=e.getPlayer();boolean fresh=!players.contains("players."+p.getUniqueId());init(p);if(getConfig().getBoolean("starter.give-on-first-join",true))Bukkit.getScheduler().runTaskLater(this,()->grantMissing(p),10L);}
+  @EventHandler public void join(PlayerJoinEvent e){Player p=e.getPlayer();boolean fresh=!players.contains("players."+p.getUniqueId());init(p);}
   @EventHandler public void death(PlayerDeathEvent e){if(!getConfig().getBoolean("starter.auto-respawn-set",true))return;e.getDrops().removeIf(i->i.hasItemMeta()&&i.getItemMeta().getPersistentDataContainer().has(ownedKey,PersistentDataType.STRING));}
-  @EventHandler public void respawn(PlayerRespawnEvent e){if(getConfig().getBoolean("starter.auto-respawn-set",true))Bukkit.getScheduler().runTaskLater(this,()->give(e.getPlayer()),2L);}
+  @EventHandler public void respawn(PlayerRespawnEvent e){}
   @EventHandler public void close(InventoryCloseEvent e){UUID id=e.getPlayer().getUniqueId();if(menuInventories.get(id)==e.getInventory()){open.remove(id);menuInventories.remove(id);}}
   @EventHandler public void click(InventoryClickEvent e){if(!(e.getWhoClicked() instanceof Player p))return;Menu menu=open.get(p.getUniqueId());if(menu==null||e.getView().getTopInventory()!=menuInventories.get(p.getUniqueId()))return;if(e.getView().getTopInventory()!=e.getClickedInventory()){if(e.isShiftClick()||e.getClick()==ClickType.DOUBLE_CLICK)e.setCancelled(true);return;}e.setCancelled(true);int slot=e.getRawSlot();
     if(slot==guiSlot("back",49)){switch(menu.kind){case "upgrade","preview"->main(p);case "setpreview"->sets(p);default->p.closeInventory();}return;}
@@ -257,18 +297,23 @@ public final class SmurfUpgrades extends JavaPlugin implements Listener, Command
   }
   @EventHandler public void quit(PlayerQuitEvent e){open.remove(e.getPlayer().getUniqueId());menuInventories.remove(e.getPlayer().getUniqueId());}
   private final Set<UUID> busy=new HashSet<>();
-  private void attempt(Player p,int type,int chance){if(!busy.add(p.getUniqueId()))return;try{int current=level(p,type);if(current>=12){p.sendMessage(tr("&cMasz już maksymalny poziom!"));return;}if(economy==null){p.sendMessage(tr("&cBrak ekonomii Vault! Administrator musi zainstalować Vault i plugin ekonomii."));return;}
-      int next=current+1;double cost=price(type,next)*multiplier(chance);if(!economy.has(p,cost)){p.sendMessage(tr("&cNie masz wystarczająco pieniędzy. Potrzebujesz "+money(cost)+" $"));return;}
-      var transaction=economy.withdrawPlayer(p,cost);if(!transaction.transactionSuccess()){p.sendMessage(tr("&cNie udało się pobrać pieniędzy."));return;}
-      if(Math.random()*100<chance){players.set(path(p,type),next);savePlayers();p.sendMessage(tr("&a✔ Sukces! "+labels[type]+" → "+character(next)+" ("+next+")"));effect(p,true,next);
+  private void attempt(Player p,int type,int chance){if(!busy.add(p.getUniqueId()))return;try{int current=level(p,type);if(current>=12){p.sendMessage(tr("&cMasz już maksymalny poziom!"));return;}if(economy==null && current>0){p.sendMessage(tr("&cBrak ekonomii Vault! Administrator musi zainstalować Vault i plugin ekonomii."));return;}
+      int next=current+1;double cost=current==0?0:price(type,next)*multiplier(chance);if(cost>0 && !economy.has(p,cost)){p.sendMessage(tr("&cNie masz wystarczająco pieniędzy. Potrzebujesz "+money(cost)+" $"));return;}
+      var transaction=cost>0?economy.withdrawPlayer(p,cost):null;if(transaction!=null && !transaction.transactionSuccess()){p.sendMessage(tr("&cNie udało się pobrać pieniędzy."));return;}
+      if(current==0 || Math.random()*100<chance){players.set(path(p,type),next);savePlayers();p.sendMessage(tr("&a✔ Sukces! "+labels[type]+" → "+character(next)+" ("+next+")"));effect(p,true,next);
         // Replace only the currently worn/held managed item, if present; unlock persists regardless.
         replaceManaged(p,type,next);
       }else{p.sendMessage(tr("&c✘ Nieudane ulepszenie! Stracono "+money(cost)+" $, ale poziom pozostaje."));effect(p,false,current);}
       upgrade(p,type);
     }finally{busy.remove(p.getUniqueId());}}
-  private void replaceManaged(Player p,int type,int l){ItemStack updated=equipment(type,l,true);if(!hasManaged(p,type)){grantMissing(p);return;} if(isManaged(p.getInventory().getItemInOffHand(),type)){p.getInventory().setItemInOffHand(updated);return;}if(type==0){if(isManaged(p.getInventory().getHelmet(),type))p.getInventory().setHelmet(updated);}else if(type==1){if(isManaged(p.getInventory().getChestplate(),type))p.getInventory().setChestplate(updated);}else if(type==2){if(isManaged(p.getInventory().getLeggings(),type))p.getInventory().setLeggings(updated);}else if(type==3){if(isManaged(p.getInventory().getBoots(),type))p.getInventory().setBoots(updated);}else{for(int slot=0;slot<p.getInventory().getStorageContents().length;slot++){if(isManaged(p.getInventory().getItem(slot),type)){p.getInventory().setItem(slot,updated);break;}}}}
+  private void giveSingle(Player p,int type,ItemStack item){
+    Map<Integer,ItemStack> rest=p.getInventory().addItem(item);
+    for(ItemStack stack:rest.values())p.getWorld().dropItemNaturally(p.getLocation(),stack);
+    p.updateInventory();
+  }
+  private void replaceManaged(Player p,int type,int l){ItemStack updated=equipment(type,l,true);if(!hasManaged(p,type)){giveSingle(p,type,updated);return;} if(isManaged(p.getInventory().getItemInOffHand(),type)){p.getInventory().setItemInOffHand(updated);return;}if(type==0){if(isManaged(p.getInventory().getHelmet(),type))p.getInventory().setHelmet(updated);}else if(type==1){if(isManaged(p.getInventory().getChestplate(),type))p.getInventory().setChestplate(updated);}else if(type==2){if(isManaged(p.getInventory().getLeggings(),type))p.getInventory().setLeggings(updated);}else if(type==3){if(isManaged(p.getInventory().getBoots(),type))p.getInventory().setBoots(updated);}else{for(int slot=0;slot<p.getInventory().getStorageContents().length;slot++){if(isManaged(p.getInventory().getItem(slot),type)){p.getInventory().setItem(slot,updated);break;}}}}
   private boolean isAnyManaged(ItemStack i){return i!=null&&i.hasItemMeta()&&i.getItemMeta().getPersistentDataContainer().has(ownedKey,PersistentDataType.STRING);}
   private boolean isManaged(ItemStack i,int type){return i!=null&&i.hasItemMeta()&&types[type].equals(i.getItemMeta().getPersistentDataContainer().get(ownedKey,PersistentDataType.STRING));}
   @Override public boolean onCommand(CommandSender sender,Command cmd,String alias,String[] args){String name=cmd.getName();if(name.equals("smurfadmin")){if(!sender.hasPermission("smurf.admin")){sender.sendMessage(tr("&cBrak uprawnień."));return true;}if(args.length==1&&args[0].equalsIgnoreCase("reload")){loadOther();sender.sendMessage(tr("&aKonfiguracja przeładowana."));}else sender.sendMessage("/smurfadmin reload");return true;}
-    if(!(sender instanceof Player p)){sender.sendMessage("Komenda tylko dla graczy.");return true;}init(p);switch(name){case "ulepsz"->{grantMissing(p);main(p);}case "cenyulepszen"->costs(p);case "topulepszen"->ranking(p);case "sety"->{if(args.length>0){try{int l=Integer.parseInt(args[0]);if(l>=1&&l<=12)setPreview(p,l);else p.sendMessage(tr("&cPoziom 1–12."));}catch(NumberFormatException ex){p.sendMessage(tr("&cPodaj poziom 1–12."));}}else sets(p);}}return true;}
+    if(!(sender instanceof Player p)){sender.sendMessage("Komenda tylko dla graczy.");return true;}init(p);switch(name){case "ulepsz"->main(p);case "cenyulepszen"->costs(p);case "topulepszen"->ranking(p);case "sety"->{if(args.length>0){try{int l=Integer.parseInt(args[0]);if(l>=1&&l<=12)setPreview(p,l);else p.sendMessage(tr("&cPoziom 1–12."));}catch(NumberFormatException ex){p.sendMessage(tr("&cPodaj poziom 1–12."));}}else sets(p);}}return true;}
 }

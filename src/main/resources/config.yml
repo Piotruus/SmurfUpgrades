@@ -7,8 +7,8 @@ chances:
   100:
     price-multiplier: 1.00
 starter:
-  give-on-first-join: true
-  auto-respawn-set: true
+  give-on-first-join: false
+  auto-respawn-set: false
 
 # Efekty po próbie ulepszenia (nazwy Bukkit/Paper 1.21.4)
 effects:
@@ -37,7 +37,7 @@ legendary:
   broadcast: true
   broadcast-message: '&5✦ &d{player} &7odblokował poziom {stars}&7!'
 
-# Bonus do drewna przy ścinaniu siekierą SmurfUpgrades.
+# Bonus do drewna przy ścinaniu siekierą AvengersUpgrades.
 # 1.0 = zwykły drop, 2.0 = około 2x drewna, 3.0 = około 3x.
 # Działa tylko na LOG/WOOD/STEM/HYPHAE i tylko w survival/adventure.
 axe-wood:
@@ -68,7 +68,7 @@ axe-wood:
     12:
       multiplier: 3.75
 
-# Bonus nożyc: wyłącznie wymienione bloki i wyłącznie nożyce SmurfUpgrades.
+# Bonus nożyc: wyłącznie wymienione bloki i wyłącznie nożyce AvengersUpgrades.
 # Uwaga: Fortune nie zwiększa zwykle dropu wełny/liści; to osobny mechanizm.
 shears-drops:
   enabled: true
@@ -171,8 +171,8 @@ pickaxe-ores:
     12:
       multiplier: 2.10
 
-# Tylko miecz SmurfUpgrades otrzymuje CustomModelData.
+# Tylko miecz AvengersUpgrades otrzymuje CustomModelData.
 # Wymaga paczki SmurfSword-CMD-1.21.4.zip po stronie gracza.
 sword-texture:
   enabled: true
-  custom-model-data: 240001
+  custom-model-data: 240000
