@@ -1,0 +1,7 @@
+SmurfUpgrades/
+├── README.md
+├── pom.xml
+└── src/
+    └── main/
+        ├── java/
+        └── resources/
