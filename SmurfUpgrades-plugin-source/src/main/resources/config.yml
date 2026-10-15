@@ -1,0 +1,178 @@
+# Szanse i mnożniki ceny pełnej (100%)
+chances:
+  25:
+    price-multiplier: 0.25
+  50:
+    price-multiplier: 0.50
+  100:
+    price-multiplier: 1.00
+starter:
+  give-on-first-join: true
+  auto-respawn-set: true
+
+# Efekty po próbie ulepszenia (nazwy Bukkit/Paper 1.21.4)
+effects:
+  success:
+    enabled: true
+    sound: ENTITY_PLAYER_LEVELUP
+    particle: HAPPY_VILLAGER
+    count: 24
+    title-enabled: true
+    title: '&a&lULEPSZONO!'
+    subtitle: '&fNowy poziom: {stars}'
+  failure:
+    enabled: true
+    sound: ENTITY_VILLAGER_NO
+    particle: SMOKE
+    count: 12
+ranking:
+  limit: 10
+  header: '&b&l✦ TOP ULEPSZEŃ ✦'
+legendary:
+  item-name: '&5&l✦ &d{character} &5{stars} &5&l✦'
+  lore:
+    - '&8━━━━━━━━━━━━━━━━━━'
+    - '&d✧ LEGENDARNY POZIOM ✧'
+    - '&5Osiągnięto maksimum!'
+  broadcast: true
+  broadcast-message: '&5✦ &d{player} &7odblokował poziom {stars}&7!'
+
+# Bonus do drewna przy ścinaniu siekierą SmurfUpgrades.
+# 1.0 = zwykły drop, 2.0 = około 2x drewna, 3.0 = około 3x.
+# Działa tylko na LOG/WOOD/STEM/HYPHAE i tylko w survival/adventure.
+axe-wood:
+  enabled: true
+  levels:
+    1:
+      multiplier: 1.00
+    2:
+      multiplier: 1.25
+    3:
+      multiplier: 1.50
+    4:
+      multiplier: 1.75
+    5:
+      multiplier: 2.00
+    6:
+      multiplier: 2.25
+    7:
+      multiplier: 2.50
+    8:
+      multiplier: 2.75
+    9:
+      multiplier: 3.00
+    10:
+      multiplier: 3.25
+    11:
+      multiplier: 3.50
+    12:
+      multiplier: 3.75
+
+# Bonus nożyc: wyłącznie wymienione bloki i wyłącznie nożyce SmurfUpgrades.
+# Uwaga: Fortune nie zwiększa zwykle dropu wełny/liści; to osobny mechanizm.
+shears-drops:
+  enabled: true
+  allowed-blocks:
+    - WHITE_WOOL
+    - ORANGE_WOOL
+    - MAGENTA_WOOL
+    - LIGHT_BLUE_WOOL
+    - YELLOW_WOOL
+    - LIME_WOOL
+    - PINK_WOOL
+    - GRAY_WOOL
+    - LIGHT_GRAY_WOOL
+    - CYAN_WOOL
+    - PURPLE_WOOL
+    - BLUE_WOOL
+    - BROWN_WOOL
+    - GREEN_WOOL
+    - RED_WOOL
+    - BLACK_WOOL
+    - COBWEB
+    - OAK_LEAVES
+    - SPRUCE_LEAVES
+    - BIRCH_LEAVES
+    - JUNGLE_LEAVES
+    - ACACIA_LEAVES
+    - DARK_OAK_LEAVES
+    - MANGROVE_LEAVES
+    - CHERRY_LEAVES
+    - AZALEA_LEAVES
+    - FLOWERING_AZALEA_LEAVES
+  levels:
+    1:
+      multiplier: 1.00
+    2:
+      multiplier: 1.25
+    3:
+      multiplier: 1.50
+    4:
+      multiplier: 1.75
+    5:
+      multiplier: 2.00
+    6:
+      multiplier: 2.25
+    7:
+      multiplier: 2.50
+    8:
+      multiplier: 2.75
+    9:
+      multiplier: 3.00
+    10:
+      multiplier: 3.25
+    11:
+      multiplier: 3.50
+    12:
+      multiplier: 3.75
+
+# Kilof netheritowy: dodatkowy drop rud (opcjonalny, domyślnie wyłączony).
+# Fortune na kilofie działa normalnie niezależnie od tej opcji.
+pickaxe-ores:
+  enabled: false
+  allowed-blocks:
+    - COAL_ORE
+    - DEEPSLATE_COAL_ORE
+    - IRON_ORE
+    - DEEPSLATE_IRON_ORE
+    - GOLD_ORE
+    - DEEPSLATE_GOLD_ORE
+    - DIAMOND_ORE
+    - DEEPSLATE_DIAMOND_ORE
+    - EMERALD_ORE
+    - DEEPSLATE_EMERALD_ORE
+    - REDSTONE_ORE
+    - DEEPSLATE_REDSTONE_ORE
+    - LAPIS_ORE
+    - DEEPSLATE_LAPIS_ORE
+  levels:
+    1:
+      multiplier: 1.00
+    2:
+      multiplier: 1.10
+    3:
+      multiplier: 1.20
+    4:
+      multiplier: 1.30
+    5:
+      multiplier: 1.40
+    6:
+      multiplier: 1.50
+    7:
+      multiplier: 1.60
+    8:
+      multiplier: 1.70
+    9:
+      multiplier: 1.80
+    10:
+      multiplier: 1.90
+    11:
+      multiplier: 2.00
+    12:
+      multiplier: 2.10
+
+# Tylko miecz SmurfUpgrades otrzymuje CustomModelData.
+# Wymaga paczki SmurfSword-CMD-1.21.4.zip po stronie gracza.
+sword-texture:
+  enabled: true
+  custom-model-data: 240001

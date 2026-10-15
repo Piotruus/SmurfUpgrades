@@ -1,0 +1,38 @@
+# Sloty liczone od 0, zakres 0-53. Unikaj nakładania się slotów.
+background: BLACK_STAINED_GLASS_PANE
+slots:
+  category:
+    helmet: 19
+    chestplate: 20
+    leggings: 21
+    boots: 22
+    sword: 23
+    axe: 24
+    shears: 25
+    elytra: 31
+    pickaxe: 32
+  main:
+    info: 40
+  chance:
+    25: 11
+    50: 13
+    100: 15
+  current: 21
+  next: 23
+  back: 49
+
+# Jedna gwiazdka + numer; kolory używają kodów & (Minecraft).
+level-format: '⭐{level}'
+levels:
+  1: {color: '&e'}
+  2: {color: '&b'}
+  3: {color: '&d'}
+  4: {color: '&9'}
+  5: {color: '&c'}
+  6: {color: '&f'}
+  7: {color: '&6'}
+  8: {color: '&5'}
+  9: {color: '&a'}
+  10: {color: '&7'}
+  11: {color: '&4'}
+  12: {color: '&d'}

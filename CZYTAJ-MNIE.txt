@@ -1,0 +1,5 @@
+PACZKA: SmurfUpgrades plugin source + SmurfSword 3D resource pack
+1) plugin source -> build with Maven / GitHub Actions, then put generated jar in server/plugins
+2) resource pack ZIP -> .minecraft/resourcepacks, enable in game
+3) CustomModelData=240001 in plugin and pack.
+NOTE: No verified compiled jar included. Source and resourcepack are untested in Minecraft.

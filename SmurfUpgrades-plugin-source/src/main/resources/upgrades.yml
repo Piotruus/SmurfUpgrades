@@ -1,0 +1,551 @@
+# Automatyczne przypisanie: poziomy 1-10 używają TYMCZASOWO tekstury Papy Smerfa.
+# Poziom 11: Papa Smerf, poziom 12: Gargamel. Możesz zmienić head-id na własny.
+# Gdy HeadDatabase nie jest zainstalowany, plugin używa wbudowanych tekstur tych dwóch postaci.
+levels:
+  1:
+    name: "Smerfetka"
+    color: "#F4D54E"
+    head-id: "11820" # TYMCZASOWA główka Papa Smerfa; zastąp po znalezieniu tekstury
+    price: 0
+  2:
+    name: "Ciamajda"
+    color: "#8DDCF4"
+    head-id: "11820" # TYMCZASOWA główka Papa Smerfa; zastąp po znalezieniu tekstury
+    price: 2500
+  3:
+    name: "Łasuch"
+    color: "#F5A3C8"
+    head-id: "11820" # TYMCZASOWA główka Papa Smerfa; zastąp po znalezieniu tekstury
+    price: 5000
+  4:
+    name: "Maruda"
+    color: "#3E6E9B"
+    head-id: "11820" # TYMCZASOWA główka Papa Smerfa; zastąp po znalezieniu tekstury
+    price: 10000
+  5:
+    name: "Osiłek"
+    color: "#E85B45"
+    head-id: "11820" # TYMCZASOWA główka Papa Smerfa; zastąp po znalezieniu tekstury
+    price: 20000
+  6:
+    name: "Ważniak"
+    color: "#E6E6E6"
+    head-id: "11820" # TYMCZASOWA główka Papa Smerfa; zastąp po znalezieniu tekstury
+    price: 35000
+  7:
+    name: "Pracuś"
+    color: "#F39C41"
+    head-id: "11820" # TYMCZASOWA główka Papa Smerfa; zastąp po znalezieniu tekstury
+    price: 55000
+  8:
+    name: "Zgrywus"
+    color: "#A86CE3"
+    head-id: "11820" # TYMCZASOWA główka Papa Smerfa; zastąp po znalezieniu tekstury
+    price: 80000
+  9:
+    name: "Laluś"
+    color: "#66D6BF"
+    head-id: "11820" # TYMCZASOWA główka Papa Smerfa; zastąp po znalezieniu tekstury
+    price: 120000
+  10:
+    name: "Dziadek Smerf"
+    color: "#8796AA"
+    head-id: "11820" # TYMCZASOWA główka Papa Smerfa; zastąp po znalezieniu tekstury
+    price: 175000
+  11:
+    name: "Papa Smerf"
+    color: "#DC404B"
+    head-id: "11820" # Papa Smerf
+    price: 250000
+  12:
+    name: "Gargamel"
+    color: "#37204F"
+    head-id: "86177" # Gargamel
+    price: 500000
+items:
+  helmet:
+    levels:
+      1:
+        enchants:
+          protection: 10
+          unbreaking: 8
+      2:
+        enchants:
+          protection: 14
+          unbreaking: 12
+      3:
+        enchants:
+          protection: 18
+          unbreaking: 16
+      4:
+        enchants:
+          protection: 22
+          unbreaking: 20
+      5:
+        enchants:
+          protection: 26
+          unbreaking: 24
+      6:
+        enchants:
+          protection: 30
+          unbreaking: 28
+      7:
+        enchants:
+          protection: 34
+          unbreaking: 32
+      8:
+        enchants:
+          protection: 39
+          unbreaking: 36
+      9:
+        enchants:
+          protection: 44
+          unbreaking: 40
+      10:
+        enchants:
+          protection: 49
+          unbreaking: 44
+      11:
+        enchants:
+          protection: 54
+          unbreaking: 47
+      12:
+        enchants:
+          protection: 60
+          unbreaking: 50
+  chestplate:
+    levels:
+      1:
+        enchants:
+          protection: 10
+          unbreaking: 8
+      2:
+        enchants:
+          protection: 14
+          unbreaking: 12
+      3:
+        enchants:
+          protection: 18
+          unbreaking: 16
+      4:
+        enchants:
+          protection: 22
+          unbreaking: 20
+      5:
+        enchants:
+          protection: 26
+          unbreaking: 24
+      6:
+        enchants:
+          protection: 30
+          unbreaking: 28
+      7:
+        enchants:
+          protection: 34
+          unbreaking: 32
+      8:
+        enchants:
+          protection: 39
+          unbreaking: 36
+      9:
+        enchants:
+          protection: 44
+          unbreaking: 40
+      10:
+        enchants:
+          protection: 49
+          unbreaking: 44
+      11:
+        enchants:
+          protection: 54
+          unbreaking: 47
+      12:
+        enchants:
+          protection: 60
+          unbreaking: 50
+  leggings:
+    levels:
+      1:
+        enchants:
+          protection: 10
+          unbreaking: 8
+      2:
+        enchants:
+          protection: 14
+          unbreaking: 12
+      3:
+        enchants:
+          protection: 18
+          unbreaking: 16
+      4:
+        enchants:
+          protection: 22
+          unbreaking: 20
+      5:
+        enchants:
+          protection: 26
+          unbreaking: 24
+      6:
+        enchants:
+          protection: 30
+          unbreaking: 28
+      7:
+        enchants:
+          protection: 34
+          unbreaking: 32
+      8:
+        enchants:
+          protection: 39
+          unbreaking: 36
+      9:
+        enchants:
+          protection: 44
+          unbreaking: 40
+      10:
+        enchants:
+          protection: 49
+          unbreaking: 44
+      11:
+        enchants:
+          protection: 54
+          unbreaking: 47
+      12:
+        enchants:
+          protection: 60
+          unbreaking: 50
+  boots:
+    levels:
+      1:
+        enchants:
+          protection: 10
+          unbreaking: 8
+      2:
+        enchants:
+          protection: 14
+          unbreaking: 12
+      3:
+        enchants:
+          protection: 18
+          unbreaking: 16
+      4:
+        enchants:
+          protection: 22
+          unbreaking: 20
+      5:
+        enchants:
+          protection: 26
+          unbreaking: 24
+      6:
+        enchants:
+          protection: 30
+          unbreaking: 28
+      7:
+        enchants:
+          protection: 34
+          unbreaking: 32
+      8:
+        enchants:
+          protection: 39
+          unbreaking: 36
+      9:
+        enchants:
+          protection: 44
+          unbreaking: 40
+      10:
+        enchants:
+          protection: 49
+          unbreaking: 44
+      11:
+        enchants:
+          protection: 54
+          unbreaking: 47
+      12:
+        enchants:
+          protection: 60
+          unbreaking: 50
+  sword:
+    levels:
+      1:
+        enchants:
+          sharpness: 10
+          unbreaking: 8
+      2:
+        enchants:
+          sharpness: 12
+          unbreaking: 12
+      3:
+        enchants:
+          sharpness: 14
+          unbreaking: 16
+      4:
+        enchants:
+          sharpness: 15
+          unbreaking: 20
+      5:
+        enchants:
+          sharpness: 17
+          unbreaking: 24
+      6:
+        enchants:
+          sharpness: 19
+          unbreaking: 28
+      7:
+        enchants:
+          sharpness: 21
+          unbreaking: 32
+      8:
+        enchants:
+          sharpness: 23
+          unbreaking: 36
+      9:
+        enchants:
+          sharpness: 25
+          unbreaking: 40
+      10:
+        enchants:
+          sharpness: 26
+          unbreaking: 44
+      11:
+        enchants:
+          sharpness: 28
+          unbreaking: 47
+      12:
+        enchants:
+          sharpness: 30
+          unbreaking: 50
+  axe:
+    levels:
+      1:
+        enchants:
+          fortune: 1
+          sharpness: 10
+          efficiency: 3
+          unbreaking: 8
+      2:
+        enchants:
+          fortune: 2
+          sharpness: 11
+          efficiency: 4
+          unbreaking: 12
+      3:
+        enchants:
+          fortune: 3
+          sharpness: 13
+          efficiency: 5
+          unbreaking: 16
+      4:
+        enchants:
+          fortune: 4
+          sharpness: 14
+          efficiency: 6
+          unbreaking: 20
+      5:
+        enchants:
+          fortune: 5
+          sharpness: 15
+          efficiency: 7
+          unbreaking: 24
+      6:
+        enchants:
+          fortune: 6
+          sharpness: 17
+          efficiency: 8
+          unbreaking: 28
+      7:
+        enchants:
+          fortune: 7
+          sharpness: 18
+          efficiency: 9
+          unbreaking: 32
+      8:
+        enchants:
+          fortune: 8
+          sharpness: 20
+          efficiency: 10
+          unbreaking: 36
+      9:
+        enchants:
+          fortune: 9
+          sharpness: 21
+          efficiency: 11
+          unbreaking: 40
+      10:
+        enchants:
+          fortune: 10
+          sharpness: 22
+          efficiency: 12
+          unbreaking: 44
+      11:
+        enchants:
+          fortune: 11
+          sharpness: 24
+          efficiency: 13
+          unbreaking: 47
+      12:
+        enchants:
+          fortune: 12
+          sharpness: 25
+          efficiency: 14
+          unbreaking: 50
+  shears:
+    levels:
+      1:
+        enchants:
+          efficiency: 3
+          fortune: 1
+          unbreaking: 8
+      2:
+        enchants:
+          efficiency: 4
+          fortune: 2
+          unbreaking: 12
+      3:
+        enchants:
+          efficiency: 5
+          fortune: 3
+          unbreaking: 16
+      4:
+        enchants:
+          efficiency: 6
+          fortune: 4
+          unbreaking: 20
+      5:
+        enchants:
+          efficiency: 7
+          fortune: 5
+          unbreaking: 24
+      6:
+        enchants:
+          efficiency: 8
+          fortune: 6
+          unbreaking: 28
+      7:
+        enchants:
+          efficiency: 10
+          fortune: 7
+          unbreaking: 32
+      8:
+        enchants:
+          efficiency: 11
+          fortune: 8
+          unbreaking: 36
+      9:
+        enchants:
+          efficiency: 12
+          fortune: 9
+          unbreaking: 40
+      10:
+        enchants:
+          efficiency: 13
+          fortune: 10
+          unbreaking: 44
+      11:
+        enchants:
+          efficiency: 14
+          fortune: 11
+          unbreaking: 47
+      12:
+        enchants:
+          efficiency: 15
+          fortune: 12
+          unbreaking: 50
+  pickaxe:
+    levels:
+      1:
+        enchants:
+          efficiency: 4
+          fortune: 1
+          unbreaking: 8
+      2:
+        enchants:
+          efficiency: 5
+          fortune: 2
+          unbreaking: 12
+      3:
+        enchants:
+          efficiency: 6
+          fortune: 3
+          unbreaking: 16
+      4:
+        enchants:
+          efficiency: 7
+          fortune: 4
+          unbreaking: 19
+      5:
+        enchants:
+          efficiency: 8
+          fortune: 5
+          unbreaking: 23
+      6:
+        enchants:
+          efficiency: 9
+          fortune: 6
+          unbreaking: 27
+      7:
+        enchants:
+          efficiency: 10
+          fortune: 7
+          unbreaking: 31
+      8:
+        enchants:
+          efficiency: 11
+          fortune: 8
+          unbreaking: 35
+      9:
+        enchants:
+          efficiency: 12
+          fortune: 9
+          unbreaking: 39
+      10:
+        enchants:
+          efficiency: 13
+          fortune: 10
+          unbreaking: 42
+      11:
+        enchants:
+          efficiency: 14
+          fortune: 11
+          unbreaking: 46
+      12:
+        enchants:
+          efficiency: 15
+          fortune: 12
+          unbreaking: 50
+  elytra:
+    levels:
+      1:
+        enchants:
+          unbreaking: 8
+      2:
+        enchants:
+          unbreaking: 12
+      3:
+        enchants:
+          unbreaking: 16
+      4:
+        enchants:
+          unbreaking: 20
+      5:
+        enchants:
+          unbreaking: 24
+      6:
+        enchants:
+          unbreaking: 28
+      7:
+        enchants:
+          unbreaking: 32
+      8:
+        enchants:
+          unbreaking: 36
+      9:
+        enchants:
+          unbreaking: 40
+      10:
+        enchants:
+          unbreaking: 44
+      11:
+        enchants:
+          unbreaking: 47
+      12:
+        enchants:
+          unbreaking: 50
